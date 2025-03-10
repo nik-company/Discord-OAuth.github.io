@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Перенаправление Discord OAuth</title>
+<script>
+  function getParameterByName(name, url = window.location.href) {
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+  }
+
+  function handleDiscordRedirect() {
+    var accessToken = getParameterByName('access_token');
+
+    if (accessToken) {
+      // Перенаправляем обратно на локальный сервер (Python-приложение)
+      window.location.href = 'http://localhost:8000/callback?token=' + accessToken;
+    } else {
+      console.log("Токен доступа не получен из URL.");
+      // Обработка ошибки, если токен не получен
+      document.body.innerHTML = "<h1>Ошибка: Не удалось получить токен доступа.</h1>"; // Выводим сообщение об ошибке на странице
+    }
+  }
+
+  window.onload = function() {
+    handleDiscordRedirect();
+  };
+</script>
+</head>
+<body>
+  <h1>Перенаправление...</h1>
+  <p>Пожалуйста, подождите, пока вас перенаправляют.</p>
+</body>
+</html>
